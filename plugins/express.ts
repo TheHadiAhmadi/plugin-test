@@ -18,7 +18,6 @@ export default function(config: ExpressConfig): ExpressPlugin {
         name: 'express',
         description: 'Start point of application',
         init(ctx) {
-            console.log('ctx of express')
             const app = express()                
 
             ctx.addCtx('addRoute', (slug: string, method: 'get' | 'post' | 'delete', callback: (req: any, res: any) => void) => {
