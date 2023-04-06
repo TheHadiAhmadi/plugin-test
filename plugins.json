@@ -1,0 +1,6 @@
+{
+    "plugins": [
+        "./plugin",
+        "./frontend/frontend-plugin"
+    ]
+}
