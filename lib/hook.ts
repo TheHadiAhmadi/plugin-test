@@ -43,8 +43,8 @@ export function off<T extends keyof HookCallbacks>(name: T, callback: HookCallba
     callbacks[name] = callbacks[name].filter(cb => cb !== callback)
 }
 
-export function filter(name, defaultValue) {
-    return (filters[name]??[]).reduce((prev, curr) => {
+export function filter(name: string, defaultValue: any) {
+    return (filters[name]??[]).reduce((prev: any, curr: any) => {
         return curr(prev)
     }, defaultValue)
 }

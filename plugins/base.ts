@@ -1,5 +1,5 @@
 import express from 'express'
-import { Plugin } from "../plugin"
+import { Plugin } from "../lib/plugin"
 import { ExpressContext } from './express'
 
 export interface BaseContext extends ExpressContext {
@@ -19,39 +19,10 @@ export default function(config: BaseConfig): BasePlugin {
 
             ctx.addMiddleware(express.json())
 
-            ctx.addHook('express:listen', (port) => {
+            ctx.addHook('express:listen', (port: number) => {
                 console.log('listening on port: ', port)
             })
         
         }
     }
 }
-
-// ctx.fields['name'] = (params) => {
-//     console.log('plugin name is: ', params)
-// }
-
-// ctx.fields['routes'] = (params) => {
-//     Object.keys(params).map(key => {
-//         ctx.addHook('init', (app) => {
-//             const [method, slug] = key.split(' ')
-//             app[method](slug, params[key])
-//         })    
-//     })
-// }
-
-// ctx.fields['middlewares'] = (params) => {
-//     params.map(middleware => {
-//         ctx.addHook('init', (app) => {
-//             app.use(middleware)
-//         })
-//     })
-// }
-
-// ctx.fields['services'] = (params) => {
-//     Object.keys(params).map(key => {
-//         ctx.addHook('init', (app) => {
-//             addServiceToApp(app, params[key], key)
-//         })
-//     })
-// }
