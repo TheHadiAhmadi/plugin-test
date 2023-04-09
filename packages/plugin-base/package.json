@@ -1,0 +1,20 @@
+{
+  "name": "@undefined/plugin-base",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/plugin.js",
+  "types": "./src/plugin.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@undefined/plugin-express": "file:../express"
+  },
+  "exports": {
+    ".": "./src/plugin.js"
+  }
+}

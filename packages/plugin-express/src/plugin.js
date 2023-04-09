@@ -1,19 +1,10 @@
-import { Context, Plugin } from "../lib/plugin";
 import express from 'express'
 
-export interface ExpressContext extends Context {
-    addRoute: (slug: string, method: 'patch' | 'put' | 'get' | 'post' | 'delete', callback: (req: any, res: any) => void) => void
-    addMiddleware: (callback: (req: any, res: any, next: any) => void) => void
-}
-export interface ExpressPlugin extends Plugin<ExpressContext> {
-    // 
-}
+/**
+ * @type {import('./plugin').ExpressPluginFactory}
+ */
 
-export interface ExpressConfig {
-    port: number
-}
-
-export default function(config: ExpressConfig): ExpressPlugin {
+export default function(config) {
     return {
         name: 'express',
         description: 'Start point of application',

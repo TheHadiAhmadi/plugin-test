@@ -1,17 +1,13 @@
 
+const filters = {}
+/**
+ * @type {import(".").HookCallbacks}
+ */
+const callbacks = {}
 
-type HookParam = any
-type HookCallback = (param: HookParam) => HookParam | undefined | void 
-type HookCallbacks = {
-    [x: string]: HookCallback[]
-}
+let runningHooks = []
 
-const filters: any = {}
-const callbacks: HookCallbacks = {}
-
-let runningHooks: any[] = []
-
-export function run<T extends keyof HookCallbacks>(name: T, parameter: HookParam[]) {
+export function run(name, parameter) {
     if(runningHooks.filter(hook => hook === name).length < 2) { // only allow running one time
         runningHooks.push(name)
 
@@ -28,7 +24,7 @@ export function run<T extends keyof HookCallbacks>(name: T, parameter: HookParam
 
 }
 
-export function on<T extends keyof HookCallbacks>(name: T, callback: HookCallback) {
+export function on(name, callback) {
     callbacks[name] ??= []
     
     if(callbacks[name].find(cb => cb === callback)) {
@@ -38,13 +34,13 @@ export function on<T extends keyof HookCallbacks>(name: T, callback: HookCallbac
     callbacks[name].push(callback)
 } 
 
-export function off<T extends keyof HookCallbacks>(name: T, callback: HookCallback ) {
+export function off(name, callback) {
     callbacks[name] ??= []
     callbacks[name] = callbacks[name].filter(cb => cb !== callback)
 }
 
-export function filter(name: string, defaultValue: any) {
-    return (filters[name]??[]).reduce((prev: any, curr: any) => {
+export function filter(name, defaultValue) {
+    return (filters[name]??[]).reduce((prev, curr) => {
         return curr(prev)
     }, defaultValue)
 }

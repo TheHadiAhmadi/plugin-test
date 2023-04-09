@@ -1,7 +1,7 @@
 import { initPlugins, Plugin } from "../plugin";
-import base, { BaseContext } from "../plugins/base";
-import database, { DatabaseContext } from "../plugins/database";
-import express, { ExpressContext } from "../plugins/express";
+import base, { BaseContext } from "../packages/plugin-base/src/plugin";
+import database, { DatabaseContext } from "../packages/database";
+import express, { ExpressContext } from "../packages/plugin-express/plugin";
 
 
 interface CrudContext extends ExpressContext, BaseContext, DatabaseContext {

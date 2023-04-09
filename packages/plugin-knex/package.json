@@ -1,0 +1,21 @@
+{
+  "name": "@undefined/plugin-knex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/plugin.js",
+  "types": "./src/plugin.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/plugin.js"
+  },
+  "dependencies": {
+    "knex": "^2.4.2",
+    "sqlite3": "^5.1.6"
+  }
+}
