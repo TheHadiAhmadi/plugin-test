@@ -1,68 +1,76 @@
-import path from "path"
-
 /**
  * @type {() => import("@undefined/core").Plugin<any>}
  */
-export default (config) => {
+export default function pluginTodos(config) {
     return {
         name: 'todos',
         init(ctx) {
-            ctx.resolve = (from, to) => {
-                return path.resolve(path.dirname(from.replace('file:///', '/')), to)
-            }
-
+            console.log('addTable', 'todos')
             ctx.addTable('todos', [
                 {type: 'text', params: ['title']}, 
                 {type: 'text', params: ['description']}, 
                 {type: 'boolean', params: ['done']}
             ])
-            
-            async function getTodo(id) {
-                console.log('getTodo', id)
-                return await ctx.data('todos').get(id)
-            }
 
-            async function getTodoProps(params) {
-                const result = {
+            const resolve = ctx.createResolve(import.meta.url)
+            const view = ctx.createView(import.meta.url)
 
-                    todo: await getTodo(+params.id)
+            const todosController = {
+                pages:  {
+                    '/': {
+                        path: view('todos/index'),
+                        async props() {
+                            const todos = await ctx.data('todos').getAll()
+
+                            return {todos}
+                        }
+                    },
+                    '/add': {
+                        path: view('todos/add'),
+                    },
+                    '/:id': {
+                        path: view('todos/id'),
+                        async props (params) {
+                            const todo = await ctx.data('todos').get(params.id)
+                            return {
+                                todo
+                            }
+                        },
+                    },
+                    '/:id/edit': {
+                        path: view('todos/edit'),
+                        async props (params) {
+                            const todo = await ctx.data('todos').get(params.id)
+                            return {
+                                todo
+                            }
+                        }
+                    }
+                },
+                actions: {
+                    createTodo: async (data) => {
+                        return await ctx.data('todos').insert(data)
+                    },
+                    editTodo: async ({id, ...data}) => {
+                        return {
+                            data: await ctx.data('todos').update(id, data)
+                        }
+                    },
+                    removeTodo: async ({id}) => {
+                        console.log('remove', id)
+                        return {
+                            data: await ctx.data('todos').remove(id)
+                        }
+                    }
                 }
-                console.log(result)
-
-                return result
             }
             
-            ctx.addRoute('/tabler.css', 'get', (req, res) => {
-                res.sendFile(ctx.resolve(import.meta.url, './tabler.min.css'));
-            })
-            ctx.addPage('/', ctx.resolve(import.meta.url, './views/index.svelte'), {title: 'Index page'})
-            ctx.addPage('/todos', ctx.resolve(import.meta.url,'./views/todos/index.svelte'), 
-            async (params) => {
-                return {
-                    todos: await ctx.data('todos').getAll()
-                }
-            })
-            ctx.addPage('/todos/add', ctx.resolve(import.meta.url,'./views/todos/add.svelte'))
+            ctx.addController('todos', todosController)
+            ctx.serve(resolve('./public'))
 
-            ctx.addPage('/todos/:id', ctx.resolve(import.meta.url,'./views/todos/id.svelte'), getTodoProps)
-
-            ctx.addPage('/todos/add', ctx.resolve(import.meta.url,'./views/todos/add.svelte'))
-            ctx.addPage('/todos/:id/edit', ctx.resolve(import.meta.url,'./views/todos/edit.svelte'), getTodoProps)
-
-            ctx.addRoute('/todos', 'post', (req, res) => {
-                ctx.data('todos').insert(req.body)
-                res.redirect('/todos')
+            ctx.addPage('/', ctx.resolve(import.meta.url, './pages/index.svelte'), {
+                title: 'Index page'
             })
-            ctx.addRoute('/todos/:id', 'delete', (req, res) => {
-                ctx.data('todos').remove(+req.params.id)
-                res.redirect('/todos')
-            })
-            ctx.addRoute('/todos/:id', 'post', (req, res) => {
-                ctx.data('todos').update(req.params.id, req.body)
-                res.redirect('/todos/' + req.params.id)
-            })  
-
         }
     }
-
 }

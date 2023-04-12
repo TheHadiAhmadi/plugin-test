@@ -2,7 +2,8 @@
     export let todo = undefined
 </script>
 {#if todo}
-<form method="post" action="/todos/{todo.id}">
+<form method="post" action="/todos/editTodo">
+    <input name="id" type="hidden" value={todo.id}/>
     <input name="title" value={todo.title}/>
     <textarea name="description" value={todo.description} />
 {todo.done}

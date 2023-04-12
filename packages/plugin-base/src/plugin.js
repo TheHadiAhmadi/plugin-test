@@ -1,4 +1,5 @@
 import express from 'express'
+import path from 'path'
 
 /**
  * 
@@ -9,7 +10,17 @@ export default function(config) {
         name: 'base', 
         description: 'Add some Express middlewares..',
         init(ctx) {
+            ctx.resolve = (url, file) => {
+                return path.resolve(path.dirname(url.replace('file:///', '/')), file)
+            }
+
+            ctx.createResolve = (url) => (file) => ctx.resolve(url, file)
             
+
+            ctx.serve = (folder) => {
+                ctx.addMiddleware(express.static(folder))
+            }
+
             ctx.addMiddleware(express.json())
             ctx.addMiddleware(express.urlencoded({extended: true}))
 
