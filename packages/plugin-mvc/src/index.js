@@ -1,13 +1,12 @@
-
 /**
- * 
- * @type {import('.').MvcPluginFactory} 
+ * @type {import(".").MvcPluginFactory}
  */
 export default function(config) {
     return {
         name: 'mvc', 
         description: 'Adds basic MVC architecture..',
         init(ctx) {
+            
             ctx.addController = (slug, controller) => {
                 Object.keys(controller.pages ?? {}).map(key => {
                     const page = controller.pages[key]
