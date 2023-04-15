@@ -1,18 +1,23 @@
 <script lang="ts">
-    import {Button} from 'yesvelte/button'
-    import { Form } from '@undefined/plugin-admin-svelte'
-  import { Accordions, Accordion, AccordionBody, AccordionHeader } from 'yesvelte/accordion';
+  import { Button } from "yesvelte/button";
+  // import { Form } from '@undefined/plugin-admin-svelte'
+  import {
+    Accordions,
+    Accordion,
+    AccordionBody,
+    AccordionHeader,
+  } from "yesvelte/accordion";
 
-    console.log(Form)
-    function onsubmit({detail}) {
-        // 
-        console.log({detail})
-    }
-    export let title: string;
+  //   console.log(Form);
+  function onsubmit({ detail }) {
+    //
+    console.log({ detail });
+  }
+  export let title: string;
 </script>
 
 <svelte:head>
-    <link rel="stylesheet" href="/tabler.min.css"/>
+  <link rel="stylesheet" href="/tabler.min.css" />
 </svelte:head>
 
 <h1>{title}</h1>
@@ -21,16 +26,16 @@
 <a href="/todos/add">Add new todo</a>
 
 <Accordions>
-
-<Accordion>
+  <Accordion>
     <AccordionHeader>OPEN FORM</AccordionHeader>
     <AccordionBody>
-
+      HELLO
+      <!-- 
         <Form on:submit={onsubmit}>
             <Form.Input name="test"/>
             <Form.Input name="test2"/>
             <Button type="submit">Submit</Button>
-        </Form>
+        </Form> -->
     </AccordionBody>
-</Accordion>
+  </Accordion>
 </Accordions>

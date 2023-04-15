@@ -32,27 +32,40 @@ export default ({folder = ".cache"} = {}) => {
                 return result;
             }
             
-            const setCache = async (key, valuePromise) => {
-                if(isPromise(valuePromise)) {
-                    await valuePromise.then(value => {
+            const setCache = async (key, setter) => {
+                if(isPromise(setter)) {
+                    await setter.then(value => {
                         cache[toHash(key)] = value
                     })
-                } else if(typeof valuePromise === 'function') {
-                    cache[toHash(key)] = valuePromise()
+                } else if(typeof setter === 'function') {
+                    cache[toHash(key)] = await setter()
                 } else {
-                    cache[toHash(key)] = valuePromise
+                    cache[toHash(key)] = setter
                 }
                 
                 if(cache[toHash(key)]) {
                     writeFileSync(folder + '/' + toHash(key), cache[toHash(key)])
                 }
+                console.log('inside setCache')
                 return cache[toHash(key)]
             }
 
             const useCache = async (key, value) => {
+                console.log('useCache', key)
                 const result = await getCache(key)
+                console.log('useCache result', result)
+
+                if(result) {
+                    console.log('before setCache')
+                    setCache(key, value)
+                    console.log('after setCache')
+
+                    return result;
+                }
 
                 if(!result) {
+                    console.log('useCache setCache', key, value)
+
                     return await setCache(key, value)
                 }
                 return result;

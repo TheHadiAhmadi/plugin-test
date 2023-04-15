@@ -3,8 +3,10 @@
   "type": "module",
   "dependencies": {
     "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-terser": "^0.4.1",
     "@undefined/plugin-express": "file:../plugin-express",
     "rollup": "^3.20.2",
+    "rollup-plugin-typescript2": "^0.34.1",
     "svelte": "^3.58.0",
     "svelte-preprocess": "^5.0.3"
   },

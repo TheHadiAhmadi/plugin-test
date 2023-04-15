@@ -14,7 +14,7 @@ export default function(config) {
                     
                     ctx.addPage('/' + slug + key, page.path, page.props)
                 })
-                                                       
+                                                        
                 Object.keys(controller.actions ?? {}).map(key => {
                     const action = controller.actions[key]
                     ctx.addRoute('/' + slug + '/' + key, 'post', async (req, res) => {
@@ -23,6 +23,10 @@ export default function(config) {
                         res.send(result)
                     })
                 })
+            }
+
+            ctx.addLayout = function (name, path) {
+                // 
             }
 
             ctx.createView = (url, viewsFolder = './pages') => (name, props) => {

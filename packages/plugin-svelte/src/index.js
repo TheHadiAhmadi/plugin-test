@@ -3,11 +3,12 @@ import {rollup} from 'rollup'
 import { compile, preprocess } from 'svelte/compiler'
 import sveltePreprocess from 'svelte-preprocess'
 import ts from '@rollup/plugin-typescript'
-import { match } from 'assert'
 import commonjs from '@rollup/plugin-commonjs'
+import terser from '@rollup/plugin-terser'
 // import typescript from 'typescript'
 
 async function compileSvelte(options) {
+
 	const format = options.ssr ? 'esm' : 'esm'
 	const generate = options.ssr ? 'ssr' : 'dom'
 	const filename = options.filename
@@ -31,7 +32,8 @@ async function compileSvelte(options) {
 				}
 			},
 			nodeResolve(),
-			commonjs()
+			commonjs(),
+			// terser()
 		]
 	}).then(build => {
 		return build.generate({name: filename, format})
@@ -41,8 +43,12 @@ async function compileSvelte(options) {
 }
 
 const htmlTemplate = ({head, css, html, url, props}) => `<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Admin Panel</title>
 	${head}
 	<style>${css.code}</style>
 </head>
@@ -52,7 +58,7 @@ const htmlTemplate = ({head, css, html, url, props}) => `<!DOCTYPE html>
 	</main>
 	${url ? `<script type="module">
 		import Root from "${url}?dom"
-
+		console.log(Root)
 		new Root({
 			target: document.querySelector("main"),
 			hydrate: true,
@@ -66,18 +72,16 @@ function evaluate(code) {
 	const regex = /export\s*\{\s*(\w+)\s*as\s*default\s*\}\s*;/;
 	const result = regex.exec(code);
 
-	console.log('evaluate', code)
 	code = code.replace(/export\s*\{\s*(\w+)\s*as\s*default\s*\}\s*;/, `return ${result[1]};`);
 
 	return new Function(code)()
 }
 
-function renderSSR({code, url, props}) {
+function renderSSR({code, props, url, dom}) {
 	const component = evaluate(code)
-	console.log(code, component)
 
 	const {html, css, head} = component.render(props)
-	return htmlTemplate({head, css, html, url, props})
+	return htmlTemplate({head, css, url, html, props})
 }
 
 /**
@@ -89,40 +93,38 @@ export default function() {
 		name: 'svelte',
 		init(ctx) {        
 
-			let cache = {}
-
+			if(!ctx.useCache) ctx.useCache = (key, value) => value
+			
+			console.log(ctx.useCache)
 			ctx.svelte = {
 				dom: async (filename, props) => {
-					const code = await ctx.useCache(`svelte-dom:${filename}`, compileSvelte({filename, ssr: false}))
+					const code = await ctx.useCache(`svelte-dom:${filename}`)
 					return code
 				},
 				ssr: async (filename, props, url) => {
-					console.log('ssr', {name: filename, props, url})
-					const code = await ctx.useCache(`svelte-ssr:${filename}`, compileSvelte({filename, ssr: true}))
-					return renderSSR({code, props, url})
+					const code = await ctx.getCache(`svelte-ssr:${filename}`)
+					const dom = await ctx.svelte.dom(filename, props)
+					return renderSSR({code, props, url, dom})
 				},
-				// compile: (path, name) => {
-				// 	if(ctx.useCache) {
-				// 		ctx.useCache(`svelte-dom:${name}`, compileSvelte({filename: path, ssr: false}))
-				// 		ctx.useCache(`svelte-ssr:${name}`, compileSvelte({filename: path, ssr: true}))
-				// 	} else {
-				// 		cache[`svelte-dom:${name}`] = compileSvelte({filename: path, ssr: false})
-				// 		cache[`svelte-ssr:${name}`] = compileSvelte({filename: path, ssr: true})
-				// 	}
-				// }
 			}			
 
 			if(ctx.addRoute) {
 				ctx.addPage = (slug, path, getProps) => {
+					ctx.setCache(`svelte-ssr:${path}`, () => compileSvelte({filename: path, ssr: true}))
+					ctx.setCache(`svelte-dom:${path}`, () => compileSvelte({filename: path, ssr: false}))
+
 
 					ctx.addRoute(slug, 'get', async (req, res) => {
+						console.log(req.headers)
+						console.log(req.url)
 						const props = typeof getProps === 'function' ? await getProps(req.params) : getProps
 
-						if(typeof req.query.dom === 'undefined') {
+						if(!req.query.hasOwnProperty('dom')) {
 							const result = await ctx.svelte.ssr(path, props, req.url)
 							res.send(result)
 						} else {
 							const result = await ctx.svelte.dom(path, props)
+
 							res.setHeader('Content-Type', 'text/javascript')
 							res.send(result)
 						}					
