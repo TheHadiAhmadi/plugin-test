@@ -7,7 +7,12 @@ export default function(config) {
     return {
         name: 'mvc', 
         description: 'Adds basic MVC architecture..',
+        /**
+         * 
+         * @param {import ('.').MvcContext} ctx 
+         */
         init(ctx) {
+            ctx.
             ctx.addController = (slug, controller) => {
                 Object.keys(controller.pages ?? {}).map(key => {
                     const page = controller.pages[key]

@@ -10,18 +10,19 @@ export default function adminSvelte(config = {}) {
         init(ctx) {
 
             let sidebarItems = []
+            let headerItems = []
 
             const view = ctx.createView(import.meta.url, './pages');
 
-            ctx.addSidebarItem = (item) => {
-                sidebarItems = [...sidebarItems, item]
-            }
+            // ctx.addSidebarItem = (item) => {
+            //     sidebarItems = [...sidebarItems, item]
+            // }
             
-            ctx.addAdminPage = (slug, page) => {
-                // ctx.addPage(routePrefix + slug, )
-                console.log('adding admin page');
+            // ctx.addAdminPage = (slug, page) => {
+            //     // ctx.addPage(routePrefix + slug, )
+            //     console.log('adding admin page');
 
-            }
+            // }
 
             ctx.addPage(routePrefix, view('index'), () => ({sidebarItems}))
 
@@ -33,3 +34,6 @@ export default function adminSvelte(config = {}) {
         }
     }
 }
+
+
+

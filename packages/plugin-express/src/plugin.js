@@ -1,16 +1,21 @@
 import express from 'express'
 
 /**
- * @type {import('./plugin').ExpressPluginFactory}
+ * @type {import('.').ExpressPluginFactory}
  */
-
 export default function(config) {
     return {
         name: 'express',
         description: 'Start point of application',
+        /**
+         * 
+         * @param {import ("./plugin").ExpressContext} ctx 
+         * @returns 
+         */
         init(ctx) {
             const app = express()                
 
+            ctx.
             ctx.addRoute = (slug, method, callback) => {
                 app[method](slug, callback)
             }

@@ -1,0 +1,13 @@
+{
+  "name": "model",
+  "version": "1.0.0",
+  "description": "handles model issues for cms",
+  "main": "index.js",
+
+  "author": "Jawad",
+  "license": "MIT",
+  "dependencies": {
+    "mongodb": "^5.2.0",
+    "yup": "^1.0.2"
+  }
+}
