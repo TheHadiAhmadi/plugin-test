@@ -1,7 +1,5 @@
-
 /**
- * 
- * @type {import('.').MvcPluginFactory} 
+ * @type {import(".").MvcPluginFactory}
  */
 export default function(config) {
     return {
@@ -12,7 +10,7 @@ export default function(config) {
          * @param {import ('.').MvcContext} ctx 
          */
         init(ctx) {
-            ctx.
+            
             ctx.addController = (slug, controller) => {
                 Object.keys(controller.pages ?? {}).map(key => {
                     const page = controller.pages[key]
