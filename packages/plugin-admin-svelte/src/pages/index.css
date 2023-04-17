@@ -1,0 +1,15 @@
+.admin-panel{
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+}
+.header-content-wrapper{
+    display: flex;
+    flex-direction: row;
+}
+
+

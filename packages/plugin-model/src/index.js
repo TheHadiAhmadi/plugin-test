@@ -17,12 +17,7 @@ class Model {
         this.databaseName = databaseName
         this.initializeDatabase(this.databaseName)
     }
-    constructor(collectionName){
-        this.collectionName = collectionName
-        this.initializeDatabase(this.databaseName)
-        this.setCollection(this.collectionName)
-        return this.collection
-    }
+  
     setSchema(shcema){
         this.schema = object(schema)
     }
@@ -43,7 +38,7 @@ class Model {
         this.collectionName = collectionName
         this.collection = this.database.collection(this.collectionName)
     }
-    collection(collectionName){
+    getCollection(collectionName){
         this.collectionName = collectionName
         this.collection = this.database.collection(this.collectionName)
         return this.collection
@@ -148,28 +143,29 @@ class Model {
 }
 
 
-
-export default (config)=>{
+/**
+ * @type {import('.').modelFactory}
+ */
+export default function (config){
     return {
         name: 'Model',
-        init(ctx){
-            /** 
-             * @model 
-             *{ name: string,
-             * collectionName: string,
-             * schema: {} }
-             * 
-            */
+        /**
+         * 
+         * @param {import('.').ModelContext} ctx 
+         */
+        init(ctx){            
+              /**
+               * @param {import('.').Model} model 
+               */
             ctx.addModel = (model)=>{
                 let uri = dbUri
                 let databaseName =dbName
                 if(config?.uri != undefined) uri = config.uri
                 if(config?.databaseName != undefined) databaseName = config.databaseName
-                let name = model.name
                 let newModel = new Model(uri, databaseName)
                 newModel.schema = model.schema
                 newModel.createCollection(model.collectionName)
-                ctx.models.name = newModel
+                ctx.models[model.name] = newModel
             }
         }
     }
@@ -188,6 +184,6 @@ export default (config)=>{
 //     })
 // }
 // const getTodo = (ctx)=>{
-//     const totos = ctx.models.Todo.get({/**query */})
+//    const totos = ctx.models.Todo.get({/**query */})
 // }
 

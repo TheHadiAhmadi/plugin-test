@@ -15,7 +15,6 @@ export default function(config) {
         init(ctx) {
             const app = express()                
 
-            ctx.
             ctx.addRoute = (slug, method, callback) => {
                 app[method](slug, callback)
             }

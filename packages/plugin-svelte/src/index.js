@@ -91,8 +91,11 @@ function renderSSR({code, props, url, dom}) {
 export default function() {
 	return {
 		name: 'svelte',
+		/**
+		 * 
+		 * @param {import(".").SvelteContext} ctx 
+		 */
 		init(ctx) {        
-
 			if(!ctx.useCache) ctx.useCache = (key, value) => value
 			
 			console.log(ctx.useCache)
@@ -134,3 +137,5 @@ export default function() {
 		}
 	}
 }
+
+
