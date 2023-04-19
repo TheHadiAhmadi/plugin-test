@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "handles model issues for cms",
   "main": "index.js",
+  "type": "module",
 
   "author": "Jawad",
   "license": "MIT",

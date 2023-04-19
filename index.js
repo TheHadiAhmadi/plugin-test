@@ -6,6 +6,7 @@ import svelte from "@undefined/plugin-svelte";
 import knex from "@undefined/plugin-knex";
 import mvc from "@undefined/plugin-mvc";
 import pluginTodos from "./plugins/plugin-todos/index.js";
+import model from './packages/plugin-model/src/index.js'
 
 const plugins = [
     // Base Plugins
@@ -14,6 +15,7 @@ const plugins = [
         connection: './test.db',
         client: 'sqlite3'
     }),
+    // model({}),
     base({}),
     cache(),
     svelte({}),

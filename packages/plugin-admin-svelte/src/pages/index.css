@@ -1,15 +1,35 @@
 .admin-panel{
+    position: relative;
+    display: flex;
+    flex-direction: row;
     margin: 0;
     box-sizing: border-box;
+    
+}
+.header-content-wrapper{
+    display: flex;
+    flex-direction: column;
 }
 
 .header{
     display: flex;
     justify-content: space-between;
 }
-.header-content-wrapper{
-    display: flex;
-    flex-direction: row;
+.side-bar{
+    position: relative;
 }
+.side-bar-wrapper{
+    height: 100vh;
+    position: relative !important;
+
+}
+.side-bar-wrapper-compact-mode{
+    position: relative !important;
+    height: 100vh;
+    width: auto!important;
+}
+
+
+
 
 

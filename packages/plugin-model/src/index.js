@@ -1,11 +1,12 @@
-
 import { MongoClient, ServerApiVersion } from'mongodb';
-import {uri as dbUri, databaseName as dbName} from './config'
-import { AnyObject, AnyObjectSchema, AnySchema, ArraySchema,  Asserts, BooleanSchema, CastOptions, CreateErrorOptions, DateSchema, DefaultFromShape, Defined, Flags, ISchema, InferType, LocaleObject, MakePartial, Maybe, Message, MixedOptions, MixedSchema,  MixedTypeGuard, NotNull, NumberSchema, ObjectSchema, ObjectShape, Optionals, Schema, SchemaDescription, SchemaFieldDescription, SchemaInnerTypeDescription, SchemaLazyDescription, SchemaObjectDescription, SchemaRefDescription, SetFlag, StringSchema, TestConfig, TestContext, TestFunction, TestOptions, Thunk, ToggleDefault, TupleSchema, TypeFromShape, UnsetFlag, ValidateOptions, ValidationError, addMethod,  array, bool,  boolean, date,  defaultLocale, getIn, isSchema,  lazy,  mixed,  number,  object, reach,  ref, setLocale,  string, tuple } from 'yup';
+import {uri as dbUri, databaseName as dbName} from './config.js'
+import pkg from 'yup'
+
+const { AnyObject, AnyObjectSchema, AnySchema, ArraySchema,  Asserts, BooleanSchema, CastOptions, CreateErrorOptions, DateSchema, DefaultFromShape, Defined, Flags, ISchema, InferType, LocaleObject, MakePartial, Maybe, Message, MixedOptions, MixedSchema,  MixedTypeGuard, NotNull, NumberSchema, ObjectSchema, ObjectShape, Optionals, Schema, SchemaDescription, SchemaFieldDescription, SchemaInnerTypeDescription, SchemaLazyDescription, SchemaObjectDescription, SchemaRefDescription, SetFlag, StringSchema, TestConfig, TestContext, TestFunction, TestOptions, Thunk, ToggleDefault, TupleSchema, TypeFromShape, UnsetFlag, ValidateOptions, ValidationError, addMethod,  array, bool,  boolean, date,  defaultLocale, getIn, isSchema,  lazy,  mixed,  number,  object, reach,  ref, setLocale,  string, tuple } = pkg;
 class Model {
     uri = dbUri
     databaseName = dbName
-    client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true , serverApi: ServerApiVersion.v1});
+    client = new MongoClient(this.uri, { useNewUrlParser: true, useUnifiedTopology: true , serverApi: ServerApiVersion.v1});
     collectionName;
     validator;
     schema;
@@ -13,23 +14,25 @@ class Model {
     collection;
 
     constructor(uri, databaseName){
+        console.log("model init")
         this.uri = uri
         this.databaseName = databaseName
-        this.initializeDatabase(this.databaseName)
     }
+
   
-    setSchema(shcema){
-        this.schema = object(schema)
+    setSchema(schema){
+        this.schema = object(schema())
     }
 
     validate(data) {
         // Validate the data against the schema
+        console.log('data: ', data)
         this.schema.validate(data)
             .then(validData => {
-                console.log(validData); // { name: 'John Doe', email: 'johndoe@example.com', age: 30, password: 'password123' }
+                console.log("valid data: ", validData); // { name: 'John Doe', email: 'johndoe@example.com', age: 30, password: 'password123' }
             })
             .catch(err => {
-                console.log(err.errors); // ['Password must be at least 8 characters']
+                console.log('error: ', err); // ['Password must be at least 8 characters']
                 throw new Error(err.errors)
             });
     }
@@ -96,7 +99,7 @@ class Model {
     async migrateData(collection, migrationInfo) {
       // implement the migration logic here
     }
-    createCollection(collectionName, validator){
+    async createCollection(collectionName, validator){
         // Define the validation schema for the collection
         this.validator=validator
         // this.validator = {
@@ -123,7 +126,7 @@ class Model {
       
           // Create the collection with the specified schema and options
           const options = { validator };
-          const collection = this.database.collection(collectionName, (validator == undefined)? undefined : options);
+          const collection = await this.database.collection(collectionName , validator == undefined? undefined : options);
           this.collection = collection
           return collection;
     }
@@ -131,11 +134,14 @@ class Model {
     async initializeDatabase(databaseName) {
         try {
           // Connect to the MongoDB instance
-          await client.connect();
-          console.log("Connected to the MongoDB database");
+          
+          console.log("Connecting to the MongoDB database...");
+          await this.client.connect();
+          console.log("Connected.");
 
           // Get the reference to the database
-          this.database = client.db(databaseName)
+          this.database = await this.client.db(databaseName)
+
         } catch(error) {
           console.error(error);
         }
@@ -150,21 +156,20 @@ export default function (config){
     return {
         name: 'Model',
         /**
-         * 
-         * @param {import('.').ModelContext} ctx 
-         */
+         * @param {import('.').ModelContext} ctx */
         init(ctx){            
               /**
-               * @param {import('.').Model} model 
-               */
-            ctx.addModel = (model)=>{
+               * @param {import('.').Model} model */
+            ctx.addModel = async (model)=>{
                 let uri = dbUri
                 let databaseName =dbName
                 if(config?.uri != undefined) uri = config.uri
                 if(config?.databaseName != undefined) databaseName = config.databaseName
                 let newModel = new Model(uri, databaseName)
-                newModel.schema = model.schema
-                newModel.createCollection(model.collectionName)
+                await newModel.initializeDatabase(databaseName)
+                newModel.setSchema(model.schema)
+                await newModel.createCollection(model.collectionName)
+                ctx.models={}
                 ctx.models[model.name] = newModel
             }
         }
