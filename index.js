@@ -7,21 +7,24 @@ import knex from "@undefined/plugin-knex";
 import mvc from "@undefined/plugin-mvc";
 import pluginTodos from "./plugins/plugin-todos/index.js";
 import model from './packages/plugin-model/src/index.js'
+import admin from './packages/plugin-admin-svelte/src/index.js'
 
 const plugins = [
     // Base Plugins
     express({port: 3001}),
-    knex({
-        connection: './test.db',
-        client: 'sqlite3'
-    }),
-    // model({}),
+    // knex({
+    //     connection: './test.db',
+    //     client: 'sqlite3'
+    // }),
+    model({}),
     base({}),
     cache(),
     svelte({}),
     mvc(),
+    admin(),
     // User plugins
-    pluginTodos()
+    
+    // pluginTodos()
 ]
 
 init(plugins)

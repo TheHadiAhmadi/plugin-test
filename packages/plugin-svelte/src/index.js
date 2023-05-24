@@ -8,7 +8,6 @@ import terser from '@rollup/plugin-terser'
 // import typescript from 'typescript'
 
 async function compileSvelte(options) {
-
 	const format = options.ssr ? 'esm' : 'esm'
 	const generate = options.ssr ? 'ssr' : 'dom'
 	const filename = options.filename
@@ -26,7 +25,6 @@ async function compileSvelte(options) {
 					const {code: preprocesed} = await preprocess(code, sveltePreprocess(), {
 						filename
 					})
-					
 					const compiled = compile(preprocesed, {generate, filename, hydratable: true})
 					return compiled.js
 				}

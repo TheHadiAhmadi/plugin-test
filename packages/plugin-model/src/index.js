@@ -169,8 +169,12 @@ export default function (config){
                 await newModel.initializeDatabase(databaseName)
                 newModel.setSchema(model.schema)
                 await newModel.createCollection(model.collectionName)
-                ctx.models={}
+                ctx.models = ctx.models ?? {}
                 ctx.models[model.name] = newModel
+                console.log('model plugin just init')
+                console.log('model plugin just init')
+                console.log('model plugin just init')
+                console.log('model plugin just init')
             }
         }
     }

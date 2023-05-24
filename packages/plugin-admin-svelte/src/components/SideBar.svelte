@@ -1,8 +1,15 @@
  <script>
-    import { Button, Dropdown,DropdownItem, DropdownMenu, El, Icon, Sidebar, SidebarItem } from "yesvelte";
-    import { createEventDispatcher } from "svelte";
+    import { Button, Modal, ModalBody, ModalHeader, ModalTitle, ModalFooter, Dropdown,DropdownItem, DropdownMenu, El, Icon, Sidebar } from "yesvelte";
+    import { createEventDispatcher, onMount } from "svelte";
+    import SidebarItem from './SidebarItem.svelte'
     import { children } from "svelte/internal";
     export const sideBarItems = []
+    export let compactMode = true
+    export let mobileMode = false
+    const dispatch = createEventDispatcher()
+ 
+    console.log("compact", compactMode)
+    //mock data for test
     sideBarItems.push(
         {
             icon:'home', title:' home', href: './',
@@ -21,53 +28,70 @@
         },
         {
             icon:"star", title:"Customize", href: './'
-        }
+        },
+        {
+            icon:'home', title:' home', href: './',
+             children: [
+                {icon:'star', title: "pligins", href: './'},
+                {icon:'star', title: "pligins", href: './'},
+                {icon:'star', title: "pligins", href: './'},
+                {icon:'star', title: "pligins", href: './'},
+            ]
+        },
+        {
+            icon:'home', title:' home', href: './',
+             children: [
+                {icon:'star', title: "pligins", href: './'},
+                {icon:'star', title: "pligins", href: './'},
+                {icon:'star', title: "pligins", href: './'},
+                {icon:'star', title: "pligins", href: './'},
+            ]
+        },
+        {
+            icon:'home', title:' home', href: './',
+             children: [
+                {icon:'star', title: "pligins", href: './'},
+                {icon:'star', title: "pligins", href: './'},
+                {icon:'star', title: "pligins", href: './'},
+                {icon:'star', title: "pligins", href: './'},
+            ]
+        },
     )
-
-    const compactMode = true
-    const dispatch = createEventDispatcher()
-
-    const handleSidebarClick= async(href)=>{
-        await fetch(href,{method: 'get'})
-        .then((res)=> dispatch('content', res))
-    }
-    const handleFocus = ()=>{
-        console.log('hot focus')
-
-    }
-
 </script> 
 
-<El class='side-bar ' >
-    {#if compactMode}
-        <Sidebar class='side-bar-wrapper' style='' theme='dark' >
+{#if !mobileMode}
+    <El class='side-bar '  >
+        <Sidebar  class='side-bar-wrapper {compactMode? "side-bar-wrapper-compact-mode": ''}' style='{compactMode? "overflow: visible;": ''}' theme='dark' >
             {#each sideBarItems as item}
-                <SidebarItem on:click={()=>handleSidebarClick(item.href)} icon={item.icon} title={item.title}>
-                    {#if item.children}
+                {#if item.children }
+                    <SidebarItem on:load {compactMode} {...item}  >
                         {#each item.children as child}
-                             <SidebarItem on:click={()=>handleSidebarClick(child.href)} icon={child.icon} title={child.title}></SidebarItem>
+                            <SidebarItem on:load {...child} ></SidebarItem>
                         {/each}
-                    {/if}
-                </SidebarItem>
+                    </SidebarItem>
+                {:else}
+                    <SidebarItem on:load {compactMode} {...item} />
+                {/if}
             {/each}
             <slot ></slot>   
         </Sidebar> 
-    {:else}
-        <Sidebar class='side-bar-wrapper-compact-mode' style=''  theme='dark' >
-            {#each sideBarItems as item}
-                <SidebarItem icon={item.icon} >
-                    {#if item.children}
-                        <SidebarItem icon={item.icon} title={item.title} >
+    </El>
+
+{:else}
+    <Modal  on:close={()=>dispatch('toggleSidebar')} show={!compactMode} title='Admin Panel' scrollable dismissible >
+            <Sidebar style='position: static; width: 100%; height: 100%' theme='dark'>
+                {#each sideBarItems as item}
+                    {#if item.children }
+                        <SidebarItem on:load {compactMode} {...item} >
+                            {#each item.children as child}
+                                <SidebarItem on:load {...child} ></SidebarItem>
+                            {/each}
                         </SidebarItem>
+                    {:else}
+                        <SidebarItem on:load {compactMode} {...item} />
                     {/if}
-                </SidebarItem>
-                
-            {/each}
+                {/each}
+            </Sidebar>
+    </Modal>
 
-    
-            <slot ></slot>   
-        </Sidebar>
-    {/if}
-
-   
-</El>
+{/if}
